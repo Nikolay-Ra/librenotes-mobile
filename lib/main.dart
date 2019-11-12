@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:librenotes/routes.dart';
 
 void main() => runApp(App());
 
@@ -7,14 +8,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'LibreNotes',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('LibreNotes')
-        ),
-        body: Center(
-          child: Text('Hello, World!'),
-        ),
-      ),
+      initialRoute: initialRoute,
+      routes: routes,
     );
   }
 }
