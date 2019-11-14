@@ -14,13 +14,57 @@ class _NotesScreenState extends State<NotesScreen> {
     Note(id: 3, text: 'Read Flutter docs!\nhttps://flutter.dev/docs'),
   ];
 
+  String version = 'version unknown';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Notes'),
       ),
+      drawer: _getDrawer(),
       body: _getBody(),
+    );
+  }
+
+  _getDrawer() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          DrawerHeader(
+            child: FittedBox(
+              fit: BoxFit.fitHeight,
+              child: Icon(
+                Icons.event_note,
+                color: Theme.of(context).accentColor,
+              ),
+            ),
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
+          SwitchListTile(
+            title: Text('Dark Theme'),
+            value: true,
+            secondary: Icon(Icons.lightbulb_outline),
+            onChanged: (bool value) { },
+          ),
+          Divider(),
+          ListTile(
+            title: Text('Visit app page'),
+            leading: Icon(Icons.info_outline),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text(
+              version,
+              textAlign: TextAlign.end,
+            ),
+            enabled: false,
+          ),
+        ],
+      ),
     );
   }
 
