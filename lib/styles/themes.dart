@@ -10,4 +10,5 @@ final dark = ThemeData(
   brightness: Brightness.dark,
   primaryColor: Colors.blue[900],
   accentColor: Colors.orange[600],
+  toggleableActiveColor: Colors.orange[600],
 );
