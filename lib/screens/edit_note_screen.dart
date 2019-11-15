@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:librenotes/models/note.dart';
 
 class EditNoteScreen extends StatefulWidget {
   @override
@@ -6,11 +8,42 @@ class EditNoteScreen extends StatefulWidget {
 }
 
 class _NotesScreenState extends State<EditNoteScreen> {
+  Note note;
+
+  final noteTextController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      note = ModalRoute.of(context).settings.arguments;
+      noteTextController.text = note.text;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit'),
+      ),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: TextField(
+              autofocus: true,
+              expands: true,
+              maxLines: null,
+              controller: noteTextController,
+              decoration: new InputDecoration(
+                contentPadding: EdgeInsets.all(8),
+                border: InputBorder.none,
+                hintText: 'Write your note here',
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
