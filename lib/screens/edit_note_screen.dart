@@ -45,6 +45,15 @@ class _NotesScreenState extends State<EditNoteScreen> {
           ),
         ],
       ),
+      floatingActionButton: _getFloatingActionButton(),
+    );
+  }
+
+  _getFloatingActionButton() {
+    return FloatingActionButton(
+      child: Icon(Icons.save),
+      foregroundColor: Colors.white,
+      onPressed: () {},
     );
   }
 }
