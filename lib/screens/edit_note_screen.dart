@@ -27,6 +27,12 @@ class _NotesScreenState extends State<EditNoteScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.share),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: Column(
         children: <Widget>[
