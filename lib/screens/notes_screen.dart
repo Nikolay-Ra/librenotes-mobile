@@ -24,6 +24,7 @@ class _NotesScreenState extends State<NotesScreen> {
       ),
       drawer: _getDrawer(),
       body: _getBody(),
+      floatingActionButton: _getFloatingActionButton(),
     );
   }
 
@@ -65,6 +66,14 @@ class _NotesScreenState extends State<NotesScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  _getFloatingActionButton() {
+    return FloatingActionButton(
+      child: Icon(Icons.add),
+      foregroundColor: Colors.white,
+      onPressed: () {},
     );
   }
 
