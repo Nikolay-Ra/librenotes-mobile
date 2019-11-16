@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:librenotes/models/note.dart';
+import 'package:librenotes/widgets/tag.dart';
 
 class NoteCard extends StatelessWidget {
   static const textStyle = TextStyle(fontSize: 16);
@@ -29,8 +30,17 @@ class NoteCard extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(top: 8),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        for (var tag in ['TODO', 'Work', 'Study']) // TODO: replace with actual tags
+                        Padding(
+                          padding: EdgeInsets.only(right: 8),
+                          child: Tag(name: tag),
+                        ),
+                      ],
+                    ),
                     Text(
                       'not synced',
                       style: timeStyle,
