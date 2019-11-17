@@ -31,6 +31,7 @@ class NoteCard extends StatelessWidget {
                 padding: EdgeInsets.only(top: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Row(
                       children: <Widget>[
