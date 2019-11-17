@@ -11,4 +11,5 @@ final dark = ThemeData(
   primaryColor: Colors.blue[900],
   accentColor: Colors.orange[600],
   toggleableActiveColor: Colors.orange[600],
+  textSelectionHandleColor: Colors.orange[800],
 );
