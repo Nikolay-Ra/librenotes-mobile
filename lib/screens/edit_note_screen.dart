@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:librenotes/models/note.dart';
+import 'package:librenotes/widgets/add_tag_dialog.dart';
 import 'package:librenotes/widgets/tag_button.dart';
 import 'package:librenotes/widgets/toggle_tag.dart';
 
@@ -21,7 +22,7 @@ class _NotesScreenState extends State<EditNoteScreen> {
   void initState() {
     super.initState();
 
-    tagsState = List.filled(tags.length, false);
+    tagsState = List.filled(tags.length, false, growable: true);
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       note = ModalRoute.of(context).settings.arguments;
@@ -70,12 +71,24 @@ class _NotesScreenState extends State<EditNoteScreen> {
               },
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(right: 8),
-            child: TagButton(
-              name: ' + ',
-              onTap: () {},
-            ),
+          TagButton(
+            name: ' + ',
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (_) {
+                  return AddTagDialog();
+                },
+              ).then((result) {
+                if (result == null)
+                  return;
+
+                setState(() {
+                  tags.add(result);
+                  tagsState.add(true);
+                });
+              });
+            },
           ),
         ],
       ),
