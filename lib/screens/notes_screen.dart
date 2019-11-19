@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:librenotes/models/note.dart';
 import 'package:librenotes/widgets/note_card.dart';
+import 'package:package_info/package_info.dart';
 
 class NotesScreen extends StatefulWidget {
   @override
@@ -13,8 +14,20 @@ class _NotesScreenState extends State<NotesScreen> {
     Note(id: 2, text: 'Buy cookies 🍪🍪🍪'),
     Note(id: 3, text: 'Read Flutter docs!\nhttps://flutter.dev/docs'),
   ];
-
   String version = 'version unknown';
+
+  @override
+  void initState() {
+    super.initState();
+
+    PackageInfo.fromPlatform().then(
+      (PackageInfo packageInfo) {
+        setState(() {
+          version = 'v${packageInfo.version}+${packageInfo.buildNumber}';
+        });
+      }
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
