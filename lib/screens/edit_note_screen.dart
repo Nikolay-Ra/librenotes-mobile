@@ -4,6 +4,7 @@ import 'package:librenotes/models/note.dart';
 import 'package:librenotes/widgets/add_tag_dialog.dart';
 import 'package:librenotes/widgets/tag_button.dart';
 import 'package:librenotes/widgets/toggle_tag.dart';
+import 'package:share/share.dart';
 
 class EditNoteScreen extends StatefulWidget {
   @override
@@ -38,7 +39,7 @@ class _NotesScreenState extends State<EditNoteScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.share),
-            onPressed: () {},
+            onPressed: _onShare,
           ),
         ],
       ),
@@ -50,6 +51,10 @@ class _NotesScreenState extends State<EditNoteScreen> {
       ),
       floatingActionButton: _getFloatingActionButton(),
     );
+  }
+
+  _onShare() {
+    Share.share(note.text);
   }
 
   _getTagSelector() {
