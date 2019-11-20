@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:librenotes/models/note.dart';
+import 'package:librenotes/providers/settings.dart';
 import 'package:librenotes/widgets/note_card.dart';
 import 'package:package_info/package_info.dart';
+import 'package:provider/provider.dart';
 
 class NotesScreen extends StatefulWidget {
   @override
@@ -16,6 +18,8 @@ class _NotesScreenState extends State<NotesScreen> {
   ];
   String version = 'version unknown';
 
+  Settings settings;
+
   @override
   void initState() {
     super.initState();
@@ -27,6 +31,12 @@ class _NotesScreenState extends State<NotesScreen> {
         });
       }
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    settings = Provider.of<Settings>(context);
+    super.didChangeDependencies();
   }
 
   @override
@@ -66,9 +76,9 @@ class _NotesScreenState extends State<NotesScreen> {
           ),
           SwitchListTile(
             title: Text('Dark Theme'),
-            value: true,
+            value: settings.dark,
             secondary: Icon(Icons.lightbulb_outline),
-            onChanged: (bool value) { },
+            onChanged: _onThemeSwitch,
           ),
           Divider(),
           ListTile(
@@ -86,6 +96,10 @@ class _NotesScreenState extends State<NotesScreen> {
         ],
       ),
     );
+  }
+
+  _onThemeSwitch(bool value) async {
+    settings.dark = value;
   }
 
   _getFloatingActionButton() {
