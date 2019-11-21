@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:librenotes/providers/settings.dart';
+import 'package:librenotes/providers/storage.dart';
 import 'package:librenotes/routes.dart';
 import 'package:librenotes/styles/themes.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,7 @@ class App extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(builder: (_) => Settings()),
+        ChangeNotifierProvider(builder: (_) => Storage()),
       ],
       child: Consumer<Settings>(
         builder: (context, settings, _) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:librenotes/models/note.dart';
 import 'package:librenotes/providers/settings.dart';
+import 'package:librenotes/providers/storage.dart';
 import 'package:librenotes/widgets/note_card.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
@@ -11,14 +12,10 @@ class NotesScreen extends StatefulWidget {
 }
 
 class _NotesScreenState extends State<NotesScreen> {
-  List<Note> notes = [ // TODO: temporary models for layout design
-    Note(id: 1, text: 'Update project roadmap'),
-    Note(id: 2, text: 'Buy cookies 🍪🍪🍪'),
-    Note(id: 3, text: 'Read Flutter docs!\nhttps://flutter.dev/docs'),
-  ];
   String version = 'version unknown';
 
   Settings settings;
+  Storage storage;
 
   @override
   void initState() {
@@ -36,6 +33,7 @@ class _NotesScreenState extends State<NotesScreen> {
   @override
   void didChangeDependencies() {
     settings = Provider.of<Settings>(context);
+    storage = Provider.of<Storage>(context);
     super.didChangeDependencies();
   }
 
@@ -112,16 +110,16 @@ class _NotesScreenState extends State<NotesScreen> {
 
   _getBody() {
     return ListView.builder(
-      itemCount: notes.length,
+      itemCount: storage.notes.length,
       itemBuilder: (context, index) {
-        var pos = notes.length - 1 - index;
+        var pos = storage.notes.length - 1 - index;
         return _buildNoteItem(context, pos);
       },
     );
   }
 
   _buildNoteItem(context, int pos) {
-    var note = notes[pos];
+    Note note = storage.notes[pos];
 
     return Dismissible(
       key: Key(note.id.toString()),
@@ -142,7 +140,7 @@ class _NotesScreenState extends State<NotesScreen> {
       ),
       onDismissed: (direction) {
         setState(() {
-          notes.removeAt(pos);
+          storage.deleteNote(note.id);
         });
 
         Scaffold.of(context).showSnackBar(SnackBar(content: Text('Note removed')));
