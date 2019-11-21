@@ -35,10 +35,10 @@ class NoteCard extends StatelessWidget {
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        for (var tag in ['TODO', 'Work', 'Study']) // TODO: replace with actual tags
+                        for (var tag in note.tags)
                         Padding(
                           padding: EdgeInsets.only(right: 8),
-                          child: Tag(name: tag),
+                          child: Tag(name: tag.name),
                         ),
                       ],
                     ),
