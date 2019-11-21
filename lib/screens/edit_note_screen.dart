@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:librenotes/models/note.dart';
+import 'package:librenotes/models/tag.dart';
+import 'package:librenotes/providers/storage.dart';
 import 'package:librenotes/widgets/add_tag_dialog.dart';
 import 'package:librenotes/widgets/tag_button.dart';
 import 'package:librenotes/widgets/toggle_tag.dart';
+import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 
 class EditNoteScreen extends StatefulWidget {
@@ -16,26 +19,31 @@ class _NotesScreenState extends State<EditNoteScreen> {
 
   final noteTextController = TextEditingController();
 
-  final tags = ['TODO', 'Work', 'Study'];
+  Storage storage;
   List<bool> tagsState;
 
   @override
   void initState() {
     super.initState();
 
-    tagsState = List.filled(tags.length, false, growable: true);
-
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      note = ModalRoute.of(context).settings.arguments;
-      noteTextController.text = note.text;
+      noteTextController.text = note?.text;
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    storage = Provider.of<Storage>(context);
+    note = ModalRoute.of(context).settings.arguments;
+    tagsState ??= List<bool>.generate(storage.tags.length, (i) => note?.tags?.contains(storage.tags[i]) ?? false);
+    super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit'),
+        title: Text(note == null ? 'Add' : 'Edit'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.share),
@@ -63,41 +71,45 @@ class _NotesScreenState extends State<EditNoteScreen> {
       color: Theme.of(context).cardColor,
       child: Row(
         children: <Widget>[
-          for (var i = 0; i < tags.length; i++)
+          for (var i = 0; i < storage.tags.length; i++)
           Padding(
             padding: EdgeInsets.only(right: 8),
             child: ToggleTag(
-              name: tags[i],
+              name: storage.tags[i].name,
               active: tagsState[i],
-              onTap: () {
-                setState(() {
-                  tagsState[i] = !tagsState[i];
-                });
-              },
+              onTap: () => _onTapTag(i),
             ),
           ),
           TagButton(
             name: ' + ',
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (_) {
-                  return AddTagDialog();
-                },
-              ).then((result) {
-                if (result == null)
-                  return;
-
-                setState(() {
-                  tags.add(result);
-                  tagsState.add(true);
-                });
-              });
-            },
+            onTap: _onAddTag,
           ),
         ],
       ),
     );
+  }
+
+  _onTapTag(int pos) {
+    setState(() {
+      tagsState[pos] = !tagsState[pos];
+    });
+  }
+
+  _onAddTag() {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AddTagDialog();
+      },
+    ).then((result) {
+      if (result == null)
+        return;
+
+      setState(() {
+        storage.addTag(Tag(id: 0, name: result));
+        tagsState.add(true);
+      });
+    });
   }
 
   _getTextEditor() {
@@ -116,11 +128,34 @@ class _NotesScreenState extends State<EditNoteScreen> {
     );
   }
 
+  Note _toNote() {
+    List<Tag> tags = [];
+    for (int i = 0; i < tagsState.length; i++) {
+      if (tagsState[i]) {
+        tags.add(storage.tags[i]);
+      }
+    }
+
+    return Note(
+      id: note?.id,
+      tags: tags,
+      text: noteTextController.text,
+    );
+  }
+
   _getFloatingActionButton() {
     return FloatingActionButton(
       child: Icon(Icons.save),
       foregroundColor: Colors.white,
-      onPressed: () {},
+      onPressed: () {
+        Note result = _toNote();
+        if (note == null) {
+          storage.addNote(result);
+        } else {
+          storage.saveNote(result);
+        }
+        Navigator.of(context).pop();
+      },
     );
   }
 }
