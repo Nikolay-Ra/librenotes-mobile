@@ -104,7 +104,9 @@ class _NotesScreenState extends State<NotesScreen> {
     return FloatingActionButton(
       child: Icon(Icons.add),
       foregroundColor: Colors.white,
-      onPressed: () {},
+      onPressed: () {
+          Navigator.pushNamed(context, 'notes/edit');
+      },
     );
   }
 
