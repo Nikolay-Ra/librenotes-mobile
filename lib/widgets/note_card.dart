@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:librenotes/models/note.dart';
+import 'package:librenotes/providers/storage.dart';
 import 'package:librenotes/widgets/tag.dart';
+import 'package:provider/provider.dart';
 
 class NoteCard extends StatelessWidget {
   static const textStyle = TextStyle(fontSize: 16);
@@ -13,6 +15,8 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final storage = Provider.of<Storage>(context);
+
     return Card(
       child: InkWell(
         onTap: onTap,
@@ -35,10 +39,10 @@ class NoteCard extends StatelessWidget {
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        for (var tag in note.tags)
+                        for (var tag_id in note.tags)
                         Padding(
                           padding: EdgeInsets.only(right: 8),
-                          child: Tag(name: tag.name),
+                          child: Tag(name: storage.getTag(tag_id).name),
                         ),
                       ],
                     ),
