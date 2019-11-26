@@ -4,6 +4,7 @@ import 'package:librenotes/models/tag.dart';
 import 'package:librenotes/providers/settings.dart';
 import 'package:librenotes/providers/storage.dart';
 import 'package:librenotes/widgets/note_card.dart';
+import 'package:librenotes/widgets/tag_dialog.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 
@@ -141,7 +142,14 @@ class _NotesScreenState extends State<NotesScreen> {
     });
   }
 
-  _editTag(Tag tag) {}
+  _editTag(Tag tag) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return TagDialog(tag: tag);
+      },
+    );
+  }
 
   _onThemeSwitch(bool value) async {
     settings.dark = value;
