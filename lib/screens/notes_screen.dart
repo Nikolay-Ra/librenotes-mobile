@@ -17,6 +17,9 @@ class _NotesScreenState extends State<NotesScreen> {
   Settings settings;
   Storage storage;
 
+  bool search = false;
+  String searchText = '';
+
   @override
   void initState() {
     super.initState();
@@ -41,18 +44,38 @@ class _NotesScreenState extends State<NotesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notes'),
+        title: search ? TextField(
+          autofocus: true,
+          onChanged: _onSearchTextChanged,
+        ) : Text('Notes'),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {},
+            icon: Icon(
+              search ? Icons.cancel : Icons.search
+            ),
+            onPressed: _onSearch,
           ),
         ],
       ),
-      drawer: _getDrawer(),
+      drawer: search ? null : _getDrawer(),
       body: _getBody(),
-      floatingActionButton: _getFloatingActionButton(),
+      floatingActionButton: search ? null : _getFloatingActionButton(),
     );
+  }
+
+  _onSearch() {
+    setState(() {
+      search = !search;
+      if (search) {
+        searchText = '';
+      }
+    });
+  }
+
+  _onSearchTextChanged(String value) {
+    setState(() {
+      searchText = value;
+    });
   }
 
   _getDrawer() {
@@ -111,18 +134,24 @@ class _NotesScreenState extends State<NotesScreen> {
   }
 
   _getBody() {
+    List<Note> notes = storage.notes;
+
+    if (search) {
+      notes = notes.where(
+        (note) => search ? note.text.toLowerCase().contains(searchText.toLowerCase()) : true
+      ).toList();
+    }
+
     return ListView.builder(
-      itemCount: storage.notes.length,
+      itemCount: notes.length,
       itemBuilder: (context, index) {
-        var pos = storage.notes.length - 1 - index;
-        return _buildNoteItem(context, pos);
+        var pos = notes.length - 1 - index;
+        return _buildNoteItem(context, notes[pos]);
       },
     );
   }
 
-  _buildNoteItem(context, int pos) {
-    Note note = storage.notes[pos];
-
+  _buildNoteItem(context, Note note) {
     return Dismissible(
       key: Key(note.id.toString()),
       child: Row(
