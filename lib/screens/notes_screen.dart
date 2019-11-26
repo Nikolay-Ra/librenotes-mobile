@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:librenotes/models/note.dart';
+import 'package:librenotes/models/tag.dart';
 import 'package:librenotes/providers/settings.dart';
 import 'package:librenotes/providers/storage.dart';
 import 'package:librenotes/widgets/note_card.dart';
@@ -16,6 +17,8 @@ class _NotesScreenState extends State<NotesScreen> {
 
   Settings settings;
   Storage storage;
+
+  int selectedTag;
 
   bool search = false;
   String searchText = '';
@@ -95,6 +98,19 @@ class _NotesScreenState extends State<NotesScreen> {
               color: Theme.of(context).primaryColor,
             ),
           ),
+          ListTile(
+            title: Text('All notes'),
+            trailing: selectedTag == null ? Icon(Icons.check) : null,
+            onTap: () => _selectTag(null),
+          ),
+          for (var tag in storage.tags)
+            ListTile(
+              title: Text(tag.name),
+              trailing: selectedTag == tag.id ? Icon(Icons.check) : null,
+              onTap: () => _selectTag(tag),
+              onLongPress: () => _editTag(tag),
+            ),
+          Divider(),
           SwitchListTile(
             title: Text('Dark Theme'),
             value: settings.dark,
@@ -119,6 +135,14 @@ class _NotesScreenState extends State<NotesScreen> {
     );
   }
 
+  _selectTag(Tag tag) {
+    setState(() {
+      selectedTag = tag?.id;
+    });
+  }
+
+  _editTag(Tag tag) {}
+
   _onThemeSwitch(bool value) async {
     settings.dark = value;
   }
@@ -135,6 +159,12 @@ class _NotesScreenState extends State<NotesScreen> {
 
   _getBody() {
     List<Note> notes = storage.notes;
+
+    if (selectedTag != null) {
+      notes = notes.where(
+        (note) => note.tags.contains(selectedTag)
+      ).toList();
+    }
 
     if (search) {
       notes = notes.where(
