@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:librenotes/models/note.dart';
-import 'package:librenotes/models/tag.dart';
 import 'package:librenotes/providers/storage.dart';
-import 'package:librenotes/widgets/add_tag_dialog.dart';
 import 'package:librenotes/widgets/tag_button.dart';
+import 'package:librenotes/widgets/tag_dialog.dart';
 import 'package:librenotes/widgets/toggle_tag.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
@@ -35,7 +34,12 @@ class _NotesScreenState extends State<EditNoteScreen> {
   void didChangeDependencies() {
     storage = Provider.of<Storage>(context);
     note = ModalRoute.of(context).settings.arguments;
-    tagsState ??= List<bool>.generate(storage.tags.length, (i) => note?.tags?.contains(storage.tags[i]) ?? false);
+
+    if (tagsState != null && tagsState.length != storage.tags.length) { // on added tag
+      tagsState.addAll(List<bool>.filled(storage.tags.length - tagsState.length, true));
+    }
+    tagsState ??= List<bool>.generate(storage.tags.length, (i) => note?.tags?.contains(storage.tags[i].id) ?? false);
+
     super.didChangeDependencies();
   }
 
@@ -99,17 +103,9 @@ class _NotesScreenState extends State<EditNoteScreen> {
     showDialog(
       context: context,
       builder: (_) {
-        return AddTagDialog();
+        return TagDialog(tag: null);
       },
-    ).then((result) {
-      if (result == null)
-        return;
-
-      setState(() {
-        storage.addTag(Tag(id: 0, name: result));
-        tagsState.add(true);
-      });
-    });
+    );
   }
 
   _getTextEditor() {
@@ -129,10 +125,10 @@ class _NotesScreenState extends State<EditNoteScreen> {
   }
 
   Note _toNote() {
-    List<Tag> tags = [];
+    List<int> tags = [];
     for (int i = 0; i < tagsState.length; i++) {
       if (tagsState[i]) {
-        tags.add(storage.tags[i]);
+        tags.add(storage.tags[i].id);
       }
     }
 
