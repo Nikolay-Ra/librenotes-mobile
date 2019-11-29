@@ -73,22 +73,26 @@ class _NotesScreenState extends State<EditNoteScreen> {
     return Container(
       padding: EdgeInsets.all(8),
       color: Theme.of(context).cardColor,
-      child: Row(
-        children: <Widget>[
-          for (var i = 0; i < storage.tags.length; i++)
-          Padding(
-            padding: EdgeInsets.only(right: 8),
-            child: ToggleTag(
-              name: storage.tags[i].name,
-              active: tagsState[i],
-              onTap: () => _onTapTag(i),
+      alignment: Alignment.topLeft,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: <Widget>[
+            for (var i = 0; i < storage.tags.length; i++)
+            Padding(
+              padding: EdgeInsets.only(right: 8),
+              child: ToggleTag(
+                name: storage.tags[i].name,
+                active: tagsState[i],
+                onTap: () => _onTapTag(i),
+              ),
             ),
-          ),
-          TagButton(
-            name: ' + ',
-            onTap: _onAddTag,
-          ),
-        ],
+            TagButton(
+              name: ' + ',
+              onTap: _onAddTag,
+            ),
+          ],
+        ),
       ),
     );
   }
