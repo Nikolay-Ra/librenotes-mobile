@@ -122,6 +122,11 @@ class _NotesScreenState extends State<NotesScreen> {
             secondary: Icon(Icons.lightbulb_outline),
             onChanged: _onThemeSwitch,
           ),
+          ListTile(
+            title: Text('Log out'),
+            leading: Icon(Icons.exit_to_app),
+            onTap: _onLogout,
+          ),
           Divider(),
           ListTile(
             title: Text('Visit app page'),
@@ -157,6 +162,33 @@ class _NotesScreenState extends State<NotesScreen> {
 
   _onThemeSwitch(bool value) async {
     settings.dark = value;
+  }
+
+  _onLogout() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Log out'),
+          content: Text('All unsynchronized data will be lost.'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('CLOSE'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('LOG OUT'),
+              onPressed: () {
+                Sync().logout();
+                Navigator.pushReplacementNamed(context, 'auth');
+              },
+            ),
+          ],
+        );
+      }
+    );
   }
 
   _getFloatingActionButton() {
