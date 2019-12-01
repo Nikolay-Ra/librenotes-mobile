@@ -78,7 +78,7 @@ class Storage with ChangeNotifier {
   }
 
   void saveTag(Tag tag) {
-    int index = _notes.indexWhere((second) => second.id == tag.id);
+    int index = _tags.indexWhere((second) => second.id == tag.id);
 
     _tags[index] = tag;
     notifyListeners();
@@ -93,7 +93,7 @@ class Storage with ChangeNotifier {
         _notes[i] = Note(
           id: id,
           created: note.created,
-          tags: note.tags.where((tag) => tag != id),
+          tags: note.tags.where((tag) => tag != id).toList(),
           text: note.text,
         );
       }
