@@ -201,6 +201,23 @@ class _NotesScreenState extends State<NotesScreen> {
     );
   }
 
+  Future<void> _onRefresh() async {
+    bool result = await Sync().sync();
+    if (!result) {
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(
+            'Synchronization error',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
   _getBody() {
     List<Note> notes = storage.notes;
 
@@ -217,22 +234,7 @@ class _NotesScreenState extends State<NotesScreen> {
     }
 
     return RefreshIndicator(
-      onRefresh: () async {
-        bool result = await Sync().sync();
-        if (!result) {
-          _scaffoldKey.currentState.showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.red,
-              content: Text(
-                'Synchronization error',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          );
-        }
-      },
+      onRefresh: _onRefresh,
       child: notes.length > 0 ? ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
         itemCount: notes.length,
