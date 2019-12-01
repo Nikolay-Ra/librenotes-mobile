@@ -437,4 +437,12 @@ class Cache {
     await applyTags(data['tags']);
     await applyNotes(data['notes']);
   }
+
+  Future<void> clear() async {
+    final db = await database;
+
+    await db.delete('notes_tag');
+    await db.delete('tag');
+    await db.delete('note');
+  }
 }

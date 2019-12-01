@@ -53,6 +53,25 @@ class Sync with ChangeNotifier {
     return true;
   }
 
+  Future<bool> logout() async {
+    _server = null;
+    _token = null;
+    _lastSync = null;
+
+    SharedPreferences.getInstance().then(
+      (prefs) {
+        prefs.remove('server');
+        prefs.remove('token');
+        prefs.remove('last_sync');
+      }
+    );
+
+    Cache().clear();
+
+    notifyListeners();
+    return true;
+  }
+
   Future<bool> sync() async {
     if (!authorized) {
       return false;
