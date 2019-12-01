@@ -233,13 +233,22 @@ class _NotesScreenState extends State<NotesScreen> {
           );
         }
       },
-      child: ListView.builder(
+      child: notes.length > 0 ? ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
         itemCount: notes.length,
         itemBuilder: (context, index) {
           var pos = notes.length - 1 - index;
           return _buildNoteItem(context, notes[pos]);
         },
+      ) : SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Container(
+          child: Center(
+            child: Text('No notes', style: Theme.of(context).textTheme.display1),
+          ),
+          alignment: Alignment.center,
+          height: MediaQuery.of(context).size.height - MediaQuery.of(context).viewPadding.top - kToolbarHeight,
+        ),
       ),
     );
   }
