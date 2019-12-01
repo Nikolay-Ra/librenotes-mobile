@@ -19,19 +19,7 @@ class Storage with ChangeNotifier {
   factory Storage() => _instance;
 
   Storage._init() {
-    _load();
-  }
-
-  _load() async {
-    cache.firstOpen.then(
-      (first) async {
-        if (first) {
-          await cache.insertDebugData();
-        }
-
-        reload();
-      }
-    );
+    reload();
   }
 
   reload() async {
