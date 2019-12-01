@@ -427,6 +427,8 @@ class Cache {
   }
 
   Future<Map<String, dynamic>> getSyncData(DateTime lastSync) async {
+    lastSync = lastSync?.toUtc();
+
     return {
       'tags': await getSyncTags(lastSync),
       'notes': await getSyncNotes(lastSync),
