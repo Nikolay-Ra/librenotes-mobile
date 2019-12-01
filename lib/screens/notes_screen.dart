@@ -3,6 +3,7 @@ import 'package:librenotes/models/note.dart';
 import 'package:librenotes/models/tag.dart';
 import 'package:librenotes/providers/settings.dart';
 import 'package:librenotes/providers/storage.dart';
+import 'package:librenotes/providers/sync.dart';
 import 'package:librenotes/widgets/note_card.dart';
 import 'package:librenotes/widgets/tag_dialog.dart';
 import 'package:package_info/package_info.dart';
@@ -14,6 +15,8 @@ class NotesScreen extends StatefulWidget {
 }
 
 class _NotesScreenState extends State<NotesScreen> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   String version = 'version unknown';
 
   Settings settings;
@@ -47,6 +50,7 @@ class _NotesScreenState extends State<NotesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: search ? TextField(
           autofocus: true,
@@ -180,12 +184,31 @@ class _NotesScreenState extends State<NotesScreen> {
       ).toList();
     }
 
-    return ListView.builder(
-      itemCount: notes.length,
-      itemBuilder: (context, index) {
-        var pos = notes.length - 1 - index;
-        return _buildNoteItem(context, notes[pos]);
+    return RefreshIndicator(
+      onRefresh: () async {
+        bool result = await Sync().sync();
+        if (!result) {
+          _scaffoldKey.currentState.showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.red,
+              content: Text(
+                'Synchronization error',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          );
+        }
       },
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: notes.length,
+        itemBuilder: (context, index) {
+          var pos = notes.length - 1 - index;
+          return _buildNoteItem(context, notes[pos]);
+        },
+      ),
     );
   }
 
