@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:librenotes/providers/sync.dart';
+import 'package:provider/provider.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -7,10 +9,31 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final serverController = TextEditingController();
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  Sync sync;
+
+  bool authProcess = false;
+
+  @override
+  void didChangeDependencies() {
+    sync = Provider.of<Sync>(context);
+
+    if (sync.authorized) {
+      Navigator.pushReplacementNamed(context, 'notes');
+    }
+
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -44,6 +67,7 @@ class _AuthScreenState extends State<AuthScreen> {
       child: Column(
         children: <Widget>[
           TextFormField(
+            controller: serverController,
             decoration: InputDecoration(
               labelText: 'Server address',
             ),
@@ -55,6 +79,7 @@ class _AuthScreenState extends State<AuthScreen> {
             },
           ),
           TextFormField(
+            controller: usernameController,
             decoration: InputDecoration(
               labelText: 'User name',
             ),
@@ -68,6 +93,7 @@ class _AuthScreenState extends State<AuthScreen> {
           TextFormField(
             autocorrect: false,
             obscureText: true,
+            controller: passwordController,
             decoration: InputDecoration(
               labelText: 'Password',
             ),
@@ -84,11 +110,7 @@ class _AuthScreenState extends State<AuthScreen> {
               children: <Widget>[
                 Expanded(
                   child: RaisedButton(
-                    onPressed: () {
-                      if (_formKey.currentState.validate()) {
-                        Navigator.pushReplacementNamed(context, 'notes');
-                      }
-                    },
+                    onPressed: authProcess ? null : _onAuth,
                     child: Text('Log In'),
                     color: Theme.of(context).brightness == Brightness.dark ? Colors.blue[900] : Theme.of(context).buttonColor,
                   ),
@@ -97,6 +119,47 @@ class _AuthScreenState extends State<AuthScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  _onAuth() async {
+    setState(() {
+      authProcess = true;
+    });
+
+    if (!_formKey.currentState.validate()) {
+      setState(() {
+        authProcess = false;
+      });
+      return;
+    }
+
+    bool result = await sync.auth(
+      serverController.text,
+      usernameController.text,
+      passwordController.text,
+    );
+
+    if (result) {
+      Navigator.pushReplacementNamed(context, 'notes');
+    } else {
+      _scaffoldKey.currentState.showSnackBar(_errorSnackBar('Incorrect credentials'));
+    }
+
+    setState(() {
+      authProcess = false;
+    });
+  }
+
+  SnackBar _errorSnackBar(String msg) {
+    return SnackBar(
+      backgroundColor: Colors.red,
+      content: Text(
+        msg,
+        style: TextStyle(
+          color: Colors.white,
+        ),
       ),
     );
   }
