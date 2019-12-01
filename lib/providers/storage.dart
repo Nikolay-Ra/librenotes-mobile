@@ -6,6 +6,8 @@ import 'package:librenotes/models/tag.dart';
 import 'package:librenotes/services/cache.dart';
 
 class Storage with ChangeNotifier {
+  static final Storage _instance = Storage._init();
+
   Cache cache = Cache();
 
   List<Note> _notes = [];
@@ -14,7 +16,9 @@ class Storage with ChangeNotifier {
   get notes => UnmodifiableListView(_notes);
   get tags => UnmodifiableListView(_tags);
 
-  Storage() {
+  factory Storage() => _instance;
+
+  Storage._init() {
     _load();
   }
 
@@ -25,11 +29,15 @@ class Storage with ChangeNotifier {
           await cache.insertDebugData();
         }
 
-        _tags = await cache.tags();
-        _notes = await cache.notes();
-        notifyListeners();
+        reload();
       }
     );
+  }
+
+  reload() async {
+    _tags = await cache.tags();
+    _notes = await cache.notes();
+    notifyListeners();
   }
 
   void addNote(Note note) async {
