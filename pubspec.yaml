@@ -13,6 +13,7 @@ dependencies:
   share: ^0.6.3+1
   shared_preferences: ^0.5.4+5
   sqflite: ^1.1.7+2
+  uuid: ^2.0.4
 
 dev_dependencies:
   flutter_test:
