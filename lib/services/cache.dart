@@ -134,7 +134,7 @@ class Cache {
     });
   }
 
-  Future<int> insertNote(Note note) async {
+  Future<int> insertNote(Note note, {String uuid}) async {
     if (note.id != null) {
       throw FormatException('ID of Note model have to be equal to null on insert');
     }
@@ -143,7 +143,11 @@ class Cache {
 
     var map = note.toMap();
     map['uuid'] = Uint8List(16);
-    Uuid().v4buffer(map['uuid']);
+    if (uuid == null) {
+      Uuid().v4buffer(map['uuid']);
+    } else {
+      Uuid().parse(uuid, buffer: map['uuid']);
+    }
     map['updated'] = _getUpdateTime();
     map['deleted'] = false;
 
@@ -285,6 +289,7 @@ class Cache {
               tags: tags,
               text: note['text'],
             ),
+            uuid: note['uuid'],
           );
         }
       }
@@ -303,7 +308,7 @@ class Cache {
     });
   }
 
-  Future<int> insertTag(Tag tag) async {
+  Future<int> insertTag(Tag tag, {String uuid}) async {
     if (tag.id != null) {
       throw FormatException('ID of Tag model have to be equal to null on insert');
     }
@@ -312,7 +317,11 @@ class Cache {
 
     var map = tag.toMap();
     map['uuid'] = Uint8List(16);
-    Uuid().v4buffer(map['uuid']);
+    if (uuid == null) {
+      Uuid().v4buffer(map['uuid']);
+    } else {
+      Uuid().parse(uuid, buffer: map['uuid']);
+    }
     map['updated'] = _getUpdateTime();
     map['deleted'] = false;
 
@@ -420,6 +429,7 @@ class Cache {
             Tag(
               name: tag['name'],
             ),
+            uuid: tag['uuid'],
           );
         }
       }
