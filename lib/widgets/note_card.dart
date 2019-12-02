@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:librenotes/models/note.dart';
 import 'package:librenotes/providers/storage.dart';
 import 'package:librenotes/widgets/tag.dart';
@@ -12,6 +13,12 @@ class NoteCard extends StatelessWidget {
   final Function onTap;
 
   const NoteCard({@required this.note, this.onTap});
+
+  String _getDate() {
+    return DateFormat(
+      'MMM d HH:m'
+    ).format(note.created);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +54,7 @@ class NoteCard extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      'not synced',
+                      _getDate(),
                       style: timeStyle,
                     ),
                   ],
