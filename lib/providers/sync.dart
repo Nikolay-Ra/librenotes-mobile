@@ -87,7 +87,7 @@ class Sync with ChangeNotifier {
       return false;
     }
 
-    cache.applyData(remoteData);
+    await cache.applyData(remoteData);
     Storage().reload();
 
     _lastSync = DateTime.now();
