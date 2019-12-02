@@ -219,7 +219,7 @@ class _NotesScreenState extends State<NotesScreen> {
   }
 
   _getBody() {
-    List<Note> notes = storage.notes;
+    List<Note> notes = List.from(storage.notes);
 
     if (selectedTag != null) {
       notes = notes.where(
@@ -232,6 +232,10 @@ class _NotesScreenState extends State<NotesScreen> {
         (note) => search ? note.text.toLowerCase().contains(searchText.toLowerCase()) : true
       ).toList();
     }
+
+    notes.sort(
+      (Note first, Note second) => first.created.compareTo(second.created)
+    );
 
     return RefreshIndicator(
       onRefresh: _onRefresh,
