@@ -49,6 +49,8 @@ class Sync with ChangeNotifier {
       }
     );
 
+    sync();
+
     notifyListeners();
     return true;
   }
