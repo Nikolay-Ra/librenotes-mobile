@@ -13,3 +13,5 @@
 [Мокапы интерфейса](docs/srs.md#22-интерфейс-пользователя)
 
 [Проектирование системы](docs/design.md)
+
+[Серверная часть](https://github.com/Nikolay-Ra/librenotes-server)
